@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Article;
 use Illuminate\Http\Request;
-use App\Role;
 
-class RoleController extends Controller
+
+class ArticleController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,9 +15,8 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
-        $dataset = Role::all();
-        return $dataset->toJson();
+        $articles = Article::all();
+        return $articles->toJson();
     }
 
     /**
@@ -26,7 +26,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        //
+        // on angular front end component's view
     }
 
     /**
@@ -38,16 +38,16 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $data = [
-            'title' => $request->title,
-            'description' => $request->description,
-            'url' => $request->url,
+            'name' => $request->name,
+            'description' => $request->description
         ];
-        if (Role::create($data)) {
-            return $this->response->created();
-        } else {
-            return $this->response->error('could_not_create_site', 500);
+        
+        if (Article::create($data)) {
+            return 'article_created';
+        } 
+        else {
+            return 'article_failed_to_created';
         }
-
     }
 
     /**
@@ -58,7 +58,8 @@ class RoleController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Article::find($id);
+        return $data->toJson();
     }
 
     /**
@@ -81,7 +82,17 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = Article::find($id);
+        $data->name = $request->name;
+        $data->description = $request->description;
+        
+        //if (Article::update($data)) {
+        if ($data->save()) {
+            return 'article_updated';
+        }
+        else {
+            return 'article_failed_to_updated';
+        }
     }
 
     /**
@@ -92,6 +103,12 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = Article::find($id);
+        if ($data->delete()) {
+            return 'article_delete';
+        }
+        else {
+            return 'article_failed_to_deleted';
+        }
     }
 }
